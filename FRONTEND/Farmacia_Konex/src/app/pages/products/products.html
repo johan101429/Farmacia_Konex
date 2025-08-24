@@ -1,21 +1,36 @@
 <div class="products-container">
   <h2>Inventario de Medicamentos</h2>
 
-  <div class="filter-container">
-    <input 
-      type="text" 
-      pInputText 
-      placeholder="Buscar por nombre o categoría..." 
-      [(ngModel)]="filterText" />
-  </div>
-
   <p-table 
+    #dt 
     [value]="productos" 
+    dataKey="id" 
     [paginator]="true" 
-    [rows]="5" 
-    [rowsPerPageOptions]="[5,10,20]" 
-    [tableStyle]="{ 'min-width': '50rem' }">
-    
+    [rows]="10" 
+    [rowsPerPageOptions]="[5, 10, 20]" 
+    [globalFilterFields]="['nombre', 'laboratorio', 'fechaFabricacion', 'fechaVencimiento', 'valorUnitario']"
+  >
+    <ng-template pTemplate="caption">
+      <div class="filter-container">
+        <p-button 
+          label="Agregar Medicamento" 
+          icon="pi pi-plus" 
+          (click)="agregarProducto()" 
+          severity="success">
+        </p-button>
+
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            pInputText
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            placeholder="Buscar Medicamento"
+          />
+        </span>
+      </div>
+    </ng-template>
+
     <ng-template pTemplate="header">
       <tr>
         <th>Nombre</th>
@@ -24,7 +39,6 @@
         <th>Fecha de Vencimiento</th>
         <th>Stock</th>
         <th>Valor Unitario ($)</th>
-        
         <th>Acciones</th>
       </tr>
     </ng-template>
@@ -37,16 +51,22 @@
         <td>{{ med.fechaVencimiento }}</td>
         <td>{{ med.cantidadStock }}</td>
         <td>{{ med.valorUnitario | number:'1.2-2' }}</td>
-       
-
+        
         <td>
+          <p-button 
+            label="Vender" 
+            severity="info" 
+            (click)="abrirDialogoVenta(med)" 
+            class="btn-rounded">
+          </p-button>
+
           <p-button 
             label="Editar" 
             severity="secondary" 
             (click)="editarProducto(med)" 
             class="btn-rounded">
           </p-button>
-
+          
           <p-button 
             label="Eliminar" 
             severity="danger" 
@@ -58,62 +78,99 @@
     </ng-template>
   </p-table>
 
-  <!-- ✅ Modal protegido con *ngIf -->
   <p-dialog 
-    header="Editar Medicamento" 
+    header="{{ isNewProduct ? 'Agregar Medicamento' : 'Editar Medicamento' }}" 
     [(visible)]="displayEditDialog" 
     [modal]="true" 
     [closable]="false" 
     [style]="{width: '400px'}">
-
     <div *ngIf="selectedMed">
       <div class="p-field">
         <label>Nombre</label>
         <input type="text" pInputText [(ngModel)]="selectedMed.nombre">
       </div>
-
       <div class="p-field">
         <label>Laboratorio</label>
         <input type="text" pInputText [(ngModel)]="selectedMed.laboratorio">
       </div>
-
       <div class="p-field">
         <label>Fecha de Fabricación</label>
         <input type="date" pInputText [(ngModel)]="selectedMed.fechaFabricacion">
       </div>
-
       <div class="p-field">
         <label>Fecha de Vencimiento</label>
         <input type="date" pInputText [(ngModel)]="selectedMed.fechaVencimiento">
       </div>
-
       <div class="p-field">
         <label>Stock</label>
         <input type="number" pInputText [(ngModel)]="selectedMed.cantidadStock">
       </div>
-
       <div class="p-field">
         <label>Precio</label>
         <input type="number" pInputText [(ngModel)]="selectedMed.valorUnitario">
       </div>
     </div>
-
-    
     <ng-template pTemplate="footer">
       <p-button 
         label="Cancelar" 
         (click)="cancelarEdicion()" 
         class="p-button-text">
       </p-button>
-
       <p-button 
         label="Guardar" 
         (click)="guardarEdicion()">
       </p-button>
     </ng-template>
   </p-dialog>
+  <p-dialog 
+    header="Vender Medicamento" 
+    [(visible)]="displaySaleDialog" 
+    [modal]="true" 
+    [closable]="false" 
+    [style]="{width: '400px'}">
+    <div *ngIf="selectedMed">
+      <div class="p-field">
+        <label>Medicamento</label>
+        <input type="text" pInputText [ngModel]="selectedMed.nombre" [disabled]="true">
+      </div>
+      <div class="p-field">
+        <label>Stock Disponible</label>
+        <input type="number" pInputText [ngModel]="selectedMed.cantidadStock" [disabled]="true">
+      </div>
+      <div class="p-field">
+        <label>Cantidad a Vender</label>
+        <input 
+          type="number" 
+          pInputText 
+          [(ngModel)]="cantidadVender" 
+          (input)="calcularValorTotal()" 
+          min="1" 
+          [max]="selectedMed.cantidadStock">
+      </div>
+      <div class="p-field">
+        <label>Valor Total a Pagar</label>
+        <input 
+          type="text" 
+          pInputText 
+          [ngModel]="valorTotalPagar | currency:'COP':'symbol':'1.2-2'" 
+          [disabled]="true">
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Cancelar" 
+        (click)="cancelarVenta()" 
+        class="p-button-text">
+      </p-button>
+      <p-button 
+        label="Confirmar Venta" 
+        (click)="confirmarVenta()" 
+        [disabled]="!cantidadVender || cantidadVender <= 0 || (selectedMed && cantidadVender > selectedMed.cantidadStock)">
+      </p-button>
+    </ng-template>
+  </p-dialog>
 
-  
+
   <p-confirmDialog></p-confirmDialog>
   <p-toast></p-toast>
 </div>
