@@ -25,9 +25,10 @@ export class MedicamentosService {
     return this.http.get<Medicamento[]>(this.baseUrl);
   }
 
-venderMedicamento(id: number, cantidad: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/ventas?medicamentoId=${id}&cantidad=${cantidad}`, {});
+  venderMedicamento(id: number, cantidad: number): Observable<any> {
+    return this.http.post(`http://localhost:8080/api/ventas?medicamentoId=${id}&cantidad=${cantidad}`, {});
   }
+
 
   actualizarMedicamento(med: Medicamento) {
   return this.http.put<Medicamento>(`http://localhost:8080/api/medicamentos/${med.id}`, med);
