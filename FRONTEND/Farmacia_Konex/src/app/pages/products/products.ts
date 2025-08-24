@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Medicamento } from '../../services/medicamentos.service';
+import { MedicamentosService, Medicamento } from '../../services/medicamentos.service'; // Importa el servicio
 import { CommonModule,DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -9,8 +9,7 @@ import { HttpClientModule,HttpClient } from '@angular/common/http';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmationService,MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule }  from 'primeng/toast';
-
+import { ToastModule }  from 'primeng/toast';
 
 @Component({
   selector: 'app-products',
@@ -27,63 +26,65 @@ import { ToastModule }  from 'primeng/toast';
     DialogModule,
     ConfirmDialogModule,
     ToastModule
-
-
-
-    ], 
+  ], 
   providers: [
     DecimalPipe,
     ConfirmationService,
-    MessageService
-  
-  
+    MessageService,
+    MedicamentosService // Asegúrate de que el servicio esté en los providers si es necesario
   ]
 })
 export class Products implements OnInit {
   productos: Medicamento[] = [];
   filterText: string = '';
 
-  // Modal de edición
-  displayEditDialog: boolean = false;  
+  displayEditDialog: boolean = false;  
   selectedMed: Medicamento | null = null; 
 
-  constructor(private http: HttpClient,
-              private confirmationService: ConfirmationService,
-              private messageService: MessageService  
-   ) {}
-  
+  constructor(
+    private medicamentosService: MedicamentosService, // Cambia HttpClient por el servicio
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService  
+  ) {}
 
   ngOnInit() {
     this.cargarProductos();
   }
 
   cargarProductos(): void {
-    this.http.get<Medicamento[]>('http://localhost:8080/api/medicamentos')
+    this.medicamentosService.getMedicamentos() // Usas el servicio para obtener la lista
       .subscribe({
         next: (data) => this.productos = data,
         error: (err: any) => console.error('Error cargando medicamentos', err)
       });
   }
 
- editarProducto(med: Medicamento) {
-    this.selectedMed = { ...med }; // Clonamos para no modificar directamente
+  editarProducto(med: Medicamento) {
+    this.selectedMed = { ...med };
     this.displayEditDialog = true;
   }
 
   guardarEdicion() {
     if (this.selectedMed) {
-      this.http.put(`http://localhost:8080/api/medicamentos/${this.selectedMed.id}`, this.selectedMed)
+      this.medicamentosService.actualizarMedicamento(this.selectedMed) // Usas el servicio para actualizar
         .subscribe({
           next: () => {
             this.displayEditDialog = false;
-            this.cargarProductos();
+            this.cargarProductos(); // Vuelve a cargar la lista
             this.messageService.add({
               severity: 'success',
               summary: 'Actualizado',
               detail: `El medicamento ${this.selectedMed?.nombre} fue actualizado`
             });
           },
-          error: (err: any) => console.error('Error actualizando medicamento', err)
+          error: (err: any) => {
+            console.error('Error actualizando medicamento', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo actualizar el medicamento'
+            });
+          }
         });
     }
   }
@@ -91,6 +92,7 @@ export class Products implements OnInit {
   cancelarEdicion() {
     this.displayEditDialog = false;
   }
+
   eliminarProducto(med: Medicamento) {
     this.confirmationService.confirm({
       message: `¿Seguro que quieres eliminar "${med.nombre}"?`,
@@ -99,7 +101,7 @@ export class Products implements OnInit {
       acceptLabel: 'Sí',
       rejectLabel: 'No',
       accept: () => {
-        this.http.delete(`http://localhost:8080/api/medicamentos/${med.id}`)
+        this.medicamentosService.eliminarMedicamento(med.id) // Usas el servicio para eliminar
           .subscribe({
             next: () => {
               this.cargarProductos();
@@ -115,6 +117,3 @@ export class Products implements OnInit {
     });
   }
 }
-
-  
-
