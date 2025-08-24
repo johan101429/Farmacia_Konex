@@ -1,1 +1,47 @@
-<p>products works!</p>
+<div class="products-container">
+  <h2>Inventario de Productos</h2>
+  
+  <div class="filter-container">
+    <input
+      type="text"
+      pInputText
+      placeholder="Buscar por nombre o categoría..."
+      [(ngModel)]="filterText"
+    />
+  </div>
+
+  <p-table
+      [value]="products"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [tableStyle]="{ 'min-width': '50rem' }"
+  >
+      <ng-template pTemplate="header">
+          <tr>
+              <th>Nombre</th>
+              <th>Stock</th>
+              <th>Precio ($)</th>
+              <th>Categoría</th>
+              <th>Proveedor</th>
+                <th>Acciones</th>
+          </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-product>
+          <tr>
+              <td>{{ product.name }}</td>
+              <td>{{ product.stock }}</td>
+              <td>{{ product.price | number:'1.2-2' }}</td>
+              <td>{{ product.category }}</td>
+              <td>{{ product.supplier }}</td>
+              <td>
+                <!-- Botón de acción -->
+                <p-button label="Vender" [rounded]="true" (onClick)="venderProducto(product)"></p-button>
+                  <p-button label="Editar" [rounded]="true" severity="secondary" (onClick)="editarProducto(product)"></p-button>
+                  <p-button label="Eliminar" [rounded]="true" severity="danger" (onClick)="eliminarProducto(product)"></p-button>
+              </td>
+          </tr>
+      </ng-template>
+  </p-table>
+</div>  
