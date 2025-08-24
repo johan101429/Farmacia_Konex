@@ -1,73 +1,120 @@
-import { Component } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { Medicamento } from '../../services/medicamentos.service';
+import { CommonModule,DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
-import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';   
 import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { HttpClientModule,HttpClient } from '@angular/common/http';
+import { DialogModule } from 'primeng/dialog';
+import { ConfirmationService,MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule }  from 'primeng/toast';
 
-interface Product {
-  name: string;
-  stock: number;
-  price: number;
-  category: string;
-  supplier: string;
-}
 
 @Component({
   selector: 'app-products',
-  standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, InputTextModule, ButtonModule, DecimalPipe],
   templateUrl: './products.html',
   styleUrls: ['./products.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    HttpClientModule,
+    DialogModule,
+    ConfirmDialogModule,
+    ToastModule
+
+
+
+    ], 
+  providers: [
+    DecimalPipe,
+    ConfirmationService,
+    MessageService
   
+  
+  ]
 })
-export class Products {
+export class Products implements OnInit {
+  productos: Medicamento[] = [];
   filterText: string = '';
 
-  products: Product[] = [
-    { name: 'Paracetamol', stock: 50, price: 3.5, category: 'Analgesico', supplier: 'Farmacia ABC' },
-    { name: 'Ibuprofeno', stock: 20, price: 5.2, category: 'Antiinflamatorio', supplier: 'Farmacia XYZ' },
-    { name: 'Amoxicilina', stock: 15, price: 12, category: 'Antibiotico', supplier: 'Farmacia ABC' },
-    { name: 'Loratadina', stock: 30, price: 7.8, category: 'Antihistaminico', supplier: 'Farmacia 123' },
-    { name: 'Omeprazol', stock: 25, price: 10.5, category: 'Inhibidor de bomba de protones', supplier: 'Farmacia XYZ' },
-    { name: 'Metformina', stock: 40, price: 8.3, category: 'Antidiabetico', supplier: 'Farmacia ABC' },
-    { name: 'Aspirina', stock: 60, price: 4.0, category: 'Antipiretico', supplier: 'Farmacia 123' },
-    { name: 'Cetirizina', stock: 35, price: 6.7, category: 'Antihistaminico', supplier: 'Farmacia XYZ' },
-    { name: 'Diclofenaco', stock: 10, price: 9.1, category: 'Antiinflamatorio', supplier: 'Farmacia ABC' },
-    { name: 'Claritromicina', stock: 18, price: 14.2, category: 'Antibiotico', supplier: 'Farmacia 123' },
-    { name: 'Salbutamol', stock: 22, price: 11.5, category: 'Broncodilatador', supplier: 'Farmacia XYZ' },
-    { name: 'Hidroxicloroquina', stock: 12, price: 15.0, category: 'Antimalarico', supplier: 'Farmacia ABC' },
-    { name: 'Fluconazol', stock: 28, price: 13.4, category: 'Antifungico', supplier: 'Farmacia 123' },
-    { name: 'Prednisona', stock: 16, price: 9.8, category: 'Corticosteroide', supplier: 'Farmacia XYZ' },
-    { name: 'Ranitidina', stock: 45, price: 7.2, category: 'Antagonista H2', supplier: 'Farmacia ABC' }
+  // Modal de edición
+  displayEditDialog: boolean = false;  
+  selectedMed: Medicamento | null = null; 
 
-    
-  ];
-  venderProducto(product: any) {
-    if (product.stock > 0) {
-      product.stock--;
-      console.log(`Se vendió 1 unidad de ${product.name}. Stock actual: ${product.stock}`);
-    } else {
-      console.warn(`No hay stock disponible de ${product.name}`);
+  constructor(private http: HttpClient,
+              private confirmationService: ConfirmationService,
+              private messageService: MessageService  
+   ) {}
+  
+
+  ngOnInit() {
+    this.cargarProductos();
+  }
+
+  cargarProductos(): void {
+    this.http.get<Medicamento[]>('http://localhost:8080/api/medicamentos')
+      .subscribe({
+        next: (data) => this.productos = data,
+        error: (err: any) => console.error('Error cargando medicamentos', err)
+      });
+  }
+
+ editarProducto(med: Medicamento) {
+    this.selectedMed = { ...med }; // Clonamos para no modificar directamente
+    this.displayEditDialog = true;
+  }
+
+  guardarEdicion() {
+    if (this.selectedMed) {
+      this.http.put(`http://localhost:8080/api/medicamentos/${this.selectedMed.id}`, this.selectedMed)
+        .subscribe({
+          next: () => {
+            this.displayEditDialog = false;
+            this.cargarProductos();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Actualizado',
+              detail: `El medicamento ${this.selectedMed?.nombre} fue actualizado`
+            });
+          },
+          error: (err: any) => console.error('Error actualizando medicamento', err)
+        });
     }
   }
 
-  editarProducto(product: any) {
-    console.log('Editar producto:', product);
-    // Aquí puedes abrir un modal o redirigir a una página de edición
+  cancelarEdicion() {
+    this.displayEditDialog = false;
   }
-
-  eliminarProducto(product: any) {
-    this.products = this.products.filter(p => p !== product);
-    console.log('Producto eliminado:', product.name);
-  }
-
-  get filteredProducts(): Product[] {
-    if (!this.filterText) return this.products;
-    return this.products.filter(p =>
-      p.name.toLowerCase().includes(this.filterText.toLowerCase()) ||
-      p.category.toLowerCase().includes(this.filterText.toLowerCase()) ||
-      p.supplier.toLowerCase().includes(this.filterText.toLowerCase())
-    );
+  eliminarProducto(med: Medicamento) {
+    this.confirmationService.confirm({
+      message: `¿Seguro que quieres eliminar "${med.nombre}"?`,
+      header: 'Confirmar Eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí',
+      rejectLabel: 'No',
+      accept: () => {
+        this.http.delete(`http://localhost:8080/api/medicamentos/${med.id}`)
+          .subscribe({
+            next: () => {
+              this.cargarProductos();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Eliminado',
+                detail: `El medicamento ${med.nombre} fue eliminado`
+              });
+            },
+            error: (err: any) => console.error('Error eliminando medicamento', err)
+          });
+      }
+    });
   }
 }
+
+  
+

@@ -1,9 +1,10 @@
+
 .products-container {
-  max-width: 1200px;
+  max-width: 500rem;
   margin: 40px auto;
   padding: 20px;
-  background: #f9f9f9;
-  border-radius: 12px;
+  background: #eaeded;
+  border-radius: 18px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif;
 }
@@ -11,10 +12,13 @@
 .products-container h2 {
   text-align: center;
   font-size: 2rem;
-  color: #1976d2;
+  color: #0a0a0a;
   margin-bottom: 24px;
 }
 
+/* ================================
+   Filtros de búsqueda
+================================== */
 .filter-container {
   display: flex;
   justify-content: center;
@@ -31,53 +35,141 @@
 }
 
 .filter-container input:focus {
-  border-color: #1976d2;
+  border-color: #0a0a0a;
   box-shadow: 0 0 5px rgba(25, 118, 210, 0.3);
   outline: none;
 }
 
-p-table {
-  background: #fff;
+/* ================================
+   Tabla PrimeNG
+================================== */
+::ng-deep .p-table {
+  background: #dd0404;
   border-radius: 12px;
   overflow: hidden;
 }
 
-p-table ::ng-deep .p-paginator {
+::ng-deep .p-paginator {
   justify-content: flex-end;
   margin-top: 12px;
 }
 
-p-table ::ng-deep th {
-  background-color: #1976d2;
+::ng-deep th {
+  background-color: #0a0a0a;
   color: white;
   text-align: left;
   padding: 12px;
+  font-weight: 600;
 }
 
-p-table ::ng-deep td {
+::ng-deep td {
   padding: 12px;
   border-bottom: 1px solid #e0e0e0;
 }
 
-p-button {
+/* ================================
+   Botones
+================================== */
+::ng-deep .p-button {
   margin-right: 6px;
   font-size: 0.9rem;
+  border-radius: 20px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-weight: 600;
 }
 
-p-button:last-child {
+::ng-deep .p-button:last-child {
   margin-right: 0;
 }
 
+::ng-deep .p-button-text {
+  color: #636e72 ;
+}
+
+::ng-deep .p-button.p-button-success {
+  background: var(--success-gradient);
+  border: none;
+}
+
+/* ================================
+   Dialog PrimeNG
+================================== */
+::ng-deep .p-dialog .p-field {
+  margin-bottom: 1.2rem;
+  font-family: 'Arial', sans-serif;
+}
+
+::ng-deep .p-dialog label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: var(--text-dark);
+}
+
+::ng-deep .p-inputtext {
+  width: 100%;
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 1px solid #dcdcdc;
+  transition: 0.2s ease-in-out;
+}
+
+::ng-deep .p-inputtext:focus {
+  border-color: var(--success-color);
+  box-shadow: 0 0 5px rgba(0, 184, 148, 0.5);
+}
+::ng-deep .p-dialog-header .p-dialog-title {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+   
+}
+::ng-deep .p-confirmdialog .p-dialog-content {
+    display: flex;
+    align-items: center;
+    gap: var(--p-confirmdialog-content-gap);
+    font-family: 'Arial', sans-serif;
+}
+::ng-deep .p-dialog-footer {
+    flex-shrink: 0;
+    padding: var(--p-dialog-footer-padding);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--p-dialog-footer-gap);
+    font-family: 'Arial', sans-serif;
+}
+
+/* ================================
+   Responsive
+================================== */
 @media (max-width: 768px) {
   .filter-container input {
     width: 90%;
   }
 
-  p-table ::ng-deep th, p-table ::ng-deep td {
+  ::ng-deep .p-table th,
+  ::ng-deep .p-table td {
     padding: 8px;
   }
 
-  p-button {
+  ::ng-deep .p-button {
     margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-container {
+    padding: 10px;
+  }
+
+  .filter-container input {
+    width: 100%;
+  }
+
+  ::ng-deep .p-button {
+    width: 100%;
+    margin-bottom: 8px;
   }
 }
