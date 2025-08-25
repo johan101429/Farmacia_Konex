@@ -15,7 +15,7 @@ export interface Medicamento {
 
 export interface Venta {
   id: number;
-  fechaHora: string;   // ✅ ya lo devuelve el backend
+  fechaHora: Date;   // ✅ ya lo devuelve el backend
   medicamento: {
     id: number;
     nombre: string;
