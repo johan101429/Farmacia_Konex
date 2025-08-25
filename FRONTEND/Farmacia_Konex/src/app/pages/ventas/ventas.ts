@@ -18,7 +18,7 @@ import { DatePicker } from 'primeng/datepicker'; // Nuevo nombre
     FormsModule,
     TableModule,
     ButtonModule,
-    DatePicker  // Use DatePicker, no CalendarModule
+    DatePicker  
   ],
   templateUrl: './ventas.html',
   styleUrls: ['./ventas.css']
