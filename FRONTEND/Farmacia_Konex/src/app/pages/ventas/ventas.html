@@ -1,34 +1,63 @@
-<div class="ventas-container">
-  <h2>📊 Ventas Realizadas</h2>
+<div class="card">
+  <h2 class="titulo">📊 Ventas Realizadas</h2>
 
-  
+  <!-- Filtros -->
+  <div class="filtros-container">
+    <div class="filtro-fechas">
+      <label for="rango">📅 Rango de Fechas:</label>
+      <p-date-picker
+        id="rango"
+        [(ngModel)]="rangoFechas"
+        selectionMode="range"
+        dateFormat="yy-mm-dd"
+        placeholder="Seleccione rango de fechas"
+      ></p-date-picker>
+    </div>
 
-  <p-table 
-    [value]="ventas" 
-    responsiveLayout="scroll" 
-    [paginator]="true" 
-    [rows]="5" 
-    [rowsPerPageOptions]="[5,10,20]" 
-    [showCurrentPageReport]="true"
-    
+    <div class="filtro-botones">
+      <button
+        pButton
+        label="Filtrar"
+        icon="pi pi-search"
+        class="p-button-sm p-button-success"
+        (click)="filtrarVentas()"
+      ></button>
+
+      <button
+        pButton
+        label="Limpiar"
+        icon="pi pi-times"
+        class="p-button-sm p-button-secondary"
+        (click)="limpiarFiltro()"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Tabla de Ventas -->
+  <p-table
+    [value]="ventasFiltradas"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]" 
+    responsiveLayout="scroll"
+    class="ventas-table"
   >
     <ng-template pTemplate="header">
       <tr>
         <th>ID</th>
         <th>Medicamento</th>
-        <th>Cantidad Vendida</th>
+        <th>Cantidad</th>
         <th>Fecha de Venta</th>
         <th>Valor Unitario</th>
         <th>Valor Total</th>
       </tr>
     </ng-template>
-    
     <ng-template pTemplate="body" let-venta>
       <tr>
         <td>{{ venta.id }}</td>
         <td>{{ venta.medicamento.nombre }}</td>
         <td>{{ venta.cantidad }}</td>
-        <td>{{ venta.fechaHora | date:'short' }}</td>
+        <td>{{ venta.fechaHora | date: 'short' }}</td>
         <td>{{ venta.medicamento.valorUnitario | currency }}</td>
         <td>{{ venta.cantidad * venta.medicamento.valorUnitario | currency }}</td>
       </tr>

@@ -15,9 +15,19 @@ export interface Medicamento {
 
 export interface Venta {
   id: number;
-  medicamento: Medicamento;
-  cantidadVendida: number;
-  fechaVenta: string;
+  fechaHora: string;   // ✅ ya lo devuelve el backend
+  medicamento: {
+    id: number;
+    nombre: string;
+    laboratorio: string;
+    fechaFabricacion: string;
+    fechaVencimiento: string;
+    cantidadStock: number;
+    valorUnitario: number;
+  };
+  cantidad: number;
+  valorUnitario: number;
+  valorTotal: number;
 }
 
 
