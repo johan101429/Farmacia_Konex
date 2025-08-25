@@ -1,0 +1,98 @@
+/* Estilos generales del contenedor principal */
+.ventas-container {
+  max-width: 500rem;
+  margin: 40px auto;
+  padding: 20px;
+  background: #dae3e32e;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+.ventas-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #0a0a0a;
+  margin-bottom: 24px;
+}
+
+/* ================================
+   Tabla PrimeNG
+================================== */
+::ng-deep .p-table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .p-paginator {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+::ng-deep th {
+  background-color: #0a0a0a;
+  color: white;
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+}
+
+::ng-deep td {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* ================================
+   Botones
+================================== */
+::ng-deep .p-button {
+  margin-right: 6px;
+  font-size: 0.9rem;
+  border-radius: 20px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-weight: 600;
+}
+
+::ng-deep .p-button:last-child {
+  margin-right: 0;
+}
+
+::ng-deep .p-button-text {
+  color: #636e72;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+::ng-deep .p-button.p-button-success {
+  border: none;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 184, 148, 0.3);
+}
+
+/* ================================
+   Responsive
+================================== */
+@media (max-width: 768px) {
+  ::ng-deep .p-table th,
+  ::ng-deep .p-table td {
+    padding: 8px;
+  }
+
+  ::ng-deep .p-button {
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ventas-container {
+    padding: 10px;
+  }
+
+  ::ng-deep .p-button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}

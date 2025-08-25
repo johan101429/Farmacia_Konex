@@ -11,10 +11,8 @@ import { MenubarModule } from 'primeng/menubar';
 })
 export class Header {
   items = [
-    { label: 'Inicio', icon: 'pi pi-home', routerLink: ['/'] },
-    { label: 'Inventario', icon: 'pi pi-list', routerLink: ['/inventario'] },
-    { label: 'Ventas', icon: 'pi pi-shopping-cart', routerLink: ['/ventas'] },
-    { label: 'Clientes', icon: 'pi pi-users', routerLink: ['/clientes'] }
+    { label: 'Inventario', routerLink: '/' },
+    { label: 'Ventas', routerLink: '/ventas' }
   ];
 }
   

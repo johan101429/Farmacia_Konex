@@ -13,11 +13,20 @@ export interface Medicamento {
   
 }
 
+export interface Venta {
+  id: number;
+  medicamento: Medicamento;
+  cantidadVendida: number;
+  fechaVenta: string;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class MedicamentosService {
   private baseUrl = 'http://localhost:8080/api/medicamentos';
+  private ventaUrl = 'http://localhost:8080/api/ventas';
 
   constructor(private http: HttpClient) {}
 
@@ -42,5 +51,12 @@ export class MedicamentosService {
 
   eliminarMedicamento(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  getVentas(): Observable<Venta[]> {
+    return this.http.get<Venta[]>(this.ventaUrl);
+  }
+  getVentasPorFechas(fechaInicio: string, fechaFin: string): Observable<Venta[]> {
+    return this.http.get<Venta[]>(`${this.ventaUrl}/filtrar?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
   }
 }
